@@ -24,3 +24,6 @@ unstructured
 lxml
 langchain-classic 
 torch
+langchain-ollama
+transformers
+torch

@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 from langchain_groq import ChatGroq
-from langchain_community.embeddings import OllamaEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
@@ -35,12 +35,14 @@ prompt = ChatPromptTemplate.from_template(
 
 def create_vector_embedding():
     if "vectors" not in st.session_state:
-        st.session_state.embeddings = OllamaEmbeddings(model="qwen3-embedding")
-        st.session_state.loader = PyPDFDirectoryLoader(
-            r"D:\langchain-projects\2.QnA groq\research_papers"
-        )  # data ingestion step
 
-        st.session_state.docs = st.session_state.loader.load()  # document loading
+        st.session_state.embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L12-v2"
+        )
+
+        st.session_state.loader = PyPDFDirectoryLoader("research_papers")
+
+        st.session_state.docs = st.session_state.loader.load()
 
         st.session_state.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,
@@ -57,7 +59,6 @@ def create_vector_embedding():
             st.session_state.final_documents,
             st.session_state.embeddings
         )
-
 
 user_prompt = st.text_input("Enter your query for the research paper")
 
